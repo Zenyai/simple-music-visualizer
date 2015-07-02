@@ -2,7 +2,7 @@ import sys, pygame, os
 import midiparser, math
 
 # Configuration
-SONG = "scale.mid"
+SONG = "chord.mid"
 SCREEN_SIZE = width, height = 500, 500
 BPM = 120
 CAPTION = "Music Visualizer"
@@ -45,6 +45,10 @@ class Particle:
         self.x_speed = x_speed
         self.y_speed = y_speed
 
+    def clear_speed(self):
+        self.x_speed = 0
+        self.y_speed = 0
+
     def display(self, screen):
         pygame.draw.circle(screen, self.colour, (self.x, self.y), self.size, self.thickness)
 
@@ -64,28 +68,33 @@ class Controller(object):
         self.done = False
         self.circleObject = Particle((20, 250), 10)
         self.parsedEvents = midiparser.MidiReader().parseMidi(SONG, BPM)
-        self.curNote = self.parsedEvents[0]
-        self.curI = 0
+        self.groupEvents = midiparser.MidiReader().groupEvents(self.parsedEvents)
+        self.curNote = None
+        self.curX = 20
+        self.curKey = 0
         self.x = 10
-        self.screen.fill(BLACK)
         self.ticks = 0
+        self.nextGroup = 0
+
+        self.screen.fill(BLACK)
 
         pygame.mixer.music.load(SONG)
         pygame.mixer.music.play(1)
 
     def event_loop(self):
+
         try:
-            if pygame.mixer.music.get_pos() >= self.curNote.end:
-                self.curNote = self.parsedEvents[self.curI]
-                self.curI += 1
-                self.x += 20
+            if pygame.mixer.music.get_pos() >= self.nextGroup:
+                self.curNote = self.groupEvents.items()[self.curKey][1][0]
+                self.nextGroup = self.groupEvents.keys()[self.curKey + 1]
 
-                self.circleObject.set_xy_speed(self.parsedEvents[self.curI + 1].pitch, self.x, self.curNote.get_duration())
+                self.circleObject.set_xy_speed(self.groupEvents.items()[self.curKey + 1][1][0].pitch, self.curX,
+                self.curNote.get_duration())
 
-                print self.curI, self.circleObject.x, self.circleObject.y
-
+                self.curKey += 1
+                self.curX += 20
         except IndexError:
-            if pygame.mixer.music.get_pos() >= self.parsedEvents[self.curI - 1].end:
+            if pygame.mixer.music.get_pos() >= self.curNote.end:
                 self.done = True
 
     def update(self):

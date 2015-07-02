@@ -1,4 +1,4 @@
-import midi
+import midi, collections
 
 class NoteInfo:
     def __init__(self, pitch, velocity, start=None, end=None, duration=None):
@@ -55,6 +55,7 @@ class MidiReader:
             if key not in result: result[key] = []
             result[key].append(event)
 
+        result = collections.OrderedDict(sorted(result.items()))
         return result
 
     def parseMidi(self, SONG, BPM):
