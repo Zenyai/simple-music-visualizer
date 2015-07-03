@@ -35,7 +35,7 @@ class Particle:
         self.speedY = 0
         self.size = self.initialSize = size
         self.colour = (255, 255, 255)
-        self.thickness = 1
+        self.thickness = self.initialThickness = 1
 
     def setXYSpeed(self, toPitch, toX, duration):
         util = Util()
@@ -46,12 +46,18 @@ class Particle:
     def setSize(self, size):
         self.size = size
 
+    def setThickness(self, thickness):
+        self.thickness = thickness
+
     def clearSpeed(self):
         self.speedX = 0
         self.speedY = 0
 
     def clearSize(self):
         self.size = self.initialSize
+
+    def clearThickness(self):
+        self.thickness = self.initialThickness
 
     def display(self, screen):
         pygame.draw.circle(screen, self.colour, (self.x, self.y), self.size, self.thickness)
@@ -63,6 +69,11 @@ class Particle:
         self.x += x
         self.y += y
 
+        if self.thickness < self.size - 1:
+            self.thickness += 1
+        else:
+            self.thickness = self.size - 1
+
 # Control all the game control
 class Controller(object):
     def __init__(self):
@@ -70,7 +81,7 @@ class Controller(object):
         self.clock = pygame.time.Clock()
         self.fps = FPS
         self.done = False
-        self.circleObject = Particle((20, 250), 10)
+        self.circleObject = Particle((20, 250), 12)
         self.parsedEvents = midiparser.MidiReader().parseMidi(SONG, BPM)
         self.groupEvents = midiparser.MidiReader().groupEvents(self.parsedEvents)
         self.curNote = None
@@ -97,6 +108,7 @@ class Controller(object):
                 # Alter particle
                 self.circleObject.setXYSpeed(toPitch, self.curX, self.curNote.get_duration())
                 self.circleObject.setSize(self.curNote.velocity / 4)
+                self.circleObject.clearThickness()
 
                 self.curKey += 1
                 self.curX += 20
