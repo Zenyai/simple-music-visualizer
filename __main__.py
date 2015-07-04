@@ -1,5 +1,7 @@
 import sys, pygame, os
 import midiparser, math
+from pygame.locals import *
+from pygame import Color, Rect, Surface
 
 # Configuration
 SONG = "scale_velo.mid"
@@ -40,7 +42,6 @@ class Particle:
     def setXYSpeed(self, toPitch, toX, duration):
         util = Util()
         toY = util.calculateNotePosition(toPitch)
-
         self.speedX, self.speedY = util.calculateSpeeds(self, toX, toY, duration)
 
     def setSize(self, size):
@@ -92,6 +93,7 @@ class Controller(object):
         self.nextGroup = 0
 
         self.screen.fill(BLACK)
+        self.background = pygame.image.load('grid.bmp')
 
         pygame.mixer.music.load(SONG)
         pygame.mixer.music.play(1)
@@ -119,8 +121,13 @@ class Controller(object):
     def update(self):
         self.circleObject.update(self.ticks)
 
+    def drawGrid(self):
+        pygame.draw.rect(self.screen, Color("blue"), Rect(10,10,200,200), width=0)
+        pygame.draw.rect(self.screen, Color("darkred"), Rect(210,210,400,400), width=0)
+
     def draw(self):
         self.screen.fill(BLACK)
+        self.screen.blit(self.background, (0, 0))
         self.circleObject.display(self.screen)
 
     def displayFPS(self):
