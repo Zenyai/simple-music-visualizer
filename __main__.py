@@ -17,11 +17,8 @@ FPS = 30
 
 class Util():
     def calculateSpeeds(self, object, toX, toY, duration):
-
-        duration /= 100
-
-        speedX = (toX - object.x) / duration
-        speedY = (toY - object.y) / duration
+        speedX = (toX - object.x) * (duration / 100)
+        speedY = (toY - object.y) * (duration / 100)
         return speedX, speedY
 
     # Calculate Y position of the note
@@ -35,14 +32,20 @@ class Particle:
         self.y = y
         self.speedX = 0
         self.speedY = 0
+        self.targetX = 0
+        self.targetY = 0
+        self.totalDuration = 0
         self.size = self.initialSize = size
         self.colour = (255, 255, 255)
         self.thickness = self.initialThickness = 1
 
+        self.util = Util()
+
     def setXYSpeed(self, toPitch, toX, duration):
-        util = Util()
-        toY = util.calculateNotePosition(toPitch)
-        self.speedX, self.speedY = util.calculateSpeeds(self, toX, toY, duration)
+        self.targetX = toX
+        self.targetY = self.util.calculateNotePosition(toPitch)
+        self.totalDuration = duration
+        self.speedX, self.speedY = self.util.calculateSpeeds(self, self.targetX, self.targetY, self.totalDuration)
 
     def setSize(self, size):
         self.size = size
@@ -64,16 +67,20 @@ class Particle:
         pygame.draw.circle(screen, self.colour, (self.x, self.y), self.size, self.thickness)
 
     def update(self, ticks):
-        x = int(round(float(self.speedX) * ticks / 1000))
-        y = int(round(float(self.speedY) * ticks / 1000))
+        if self.y != self.targetX and self.y != self.targetY:
+            x = int(round(float(self.speedX) * ticks / 1000))
+            y = int(round(float(self.speedY) * ticks / 1000))
 
-        self.x += x
-        self.y += y
+            self.x += x
+            self.y += y
 
-        if self.thickness < self.size - 1:
-            self.thickness += 1
+            if self.thickness < self.size - 1:
+                self.thickness += 1
+            else:
+                self.thickness = self.size - 1
+
         else:
-            self.thickness = self.size - 1
+            self.clearSpeed()
 
 # Control all the game control
 class Controller(object):
@@ -113,17 +120,13 @@ class Controller(object):
                 self.circleObject.clearThickness()
 
                 self.curKey += 1
-                self.curX += 20
+                self.curX += 40
         except IndexError:
             if pygame.mixer.music.get_pos() >= self.curNote.end:
                 self.done = True
 
     def update(self):
         self.circleObject.update(self.ticks)
-
-    def drawGrid(self):
-        pygame.draw.rect(self.screen, Color("blue"), Rect(10,10,200,200), width=0)
-        pygame.draw.rect(self.screen, Color("darkred"), Rect(210,210,400,400), width=0)
 
     def draw(self):
         self.screen.fill(BLACK)
