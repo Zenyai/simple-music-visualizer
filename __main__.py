@@ -4,9 +4,10 @@ from pygame.locals import *
 from pygame import Color, Rect, Surface
 
 # Configuration
-SONG = "scale_velo.mid"
+BPM = 60
+MIDIFILE = "scale_velo.mid"
+SONG = midiparser.MidiReader().convertMidi(MIDIFILE, "tmp.mid", BPM)
 SCREEN_SIZE = width, height = 500, 500
-BPM = 120
 CAPTION = "Music Visualizer"
 
 

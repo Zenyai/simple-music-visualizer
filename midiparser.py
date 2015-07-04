@@ -17,6 +17,12 @@ class NoteInfo:
         return str(self)
 
 class MidiReader:
+    def setBPM(self, events, BPM):
+        filteredEvents = [x for x in events if x.name != "Set Tempo"]
+        filteredEvents.insert(0, midi.SetTempoEvent(tick=0, bpm=BPM))
+        
+        return filteredEvents
+
     def filterNoteEvents(self, events):
         return [e for e in events if e.name == "Note On" or e.name == "Note Off"]
 
@@ -58,8 +64,19 @@ class MidiReader:
         result = collections.OrderedDict(sorted(result.items()))
         return result
 
-    def parseMidi(self, SONG, BPM):
-        pattern = midi.read_midifile(SONG)
+    def convertMidi(self, midifile, newFile, BPM):
+        pattern = midi.read_midifile(midifile)
+        trackNo = 0
+        trackEvents = pattern[trackNo]
+        filteredEvents = self.setBPM(trackEvents, BPM)
+
+        pattern[trackNo] = filteredEvents
+        midi.write_midifile(newFile, pattern)
+        return newFile  # just return the name of new file
+
+
+    def parseMidi(self, midifile, BPM):
+        pattern = midi.read_midifile(midifile)
         trackNo = 0
         trackEvents = pattern[trackNo]
         return self.parseEvents(trackEvents, BPM)
