@@ -14,7 +14,7 @@ CAPTION = "Music Visualizer"
 # Global Variables
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-FPS = 30
+FPS = 120
 
 class Util():
     def calculateSpeeds(self, object, toX, toY, duration):
@@ -24,7 +24,7 @@ class Util():
 
     # Calculate Y position of the note
     def calculateNotePosition(self, pitch):
-        return (127 - pitch) * 2
+        return (127 - pitch) * 6
 
 # The circle particle
 class Particle:
@@ -39,10 +39,13 @@ class Particle:
         self.size = self.initialSize = size
         self.colour = (255, 255, 255)
         self.thickness = self.initialThickness = 1
+        self.firstUpdate = True
 
         self.util = Util()
 
     def setXYSpeed(self, toPitch, toX, duration):
+        self.x = self.targetX
+        self.y = self.targetY
         self.targetX = toX
         self.targetY = self.util.calculateNotePosition(toPitch)
         self.totalDuration = duration
@@ -68,7 +71,7 @@ class Particle:
         pygame.draw.circle(screen, self.colour, (self.x, self.y), self.size, self.thickness)
 
     def update(self, ticks):
-        if self.y != self.targetX and self.y != self.targetY:
+        if self.y != self.targetX and self.y != self.targetY and not self.firstUpdate:
             x = int(round(float(self.speedX) * ticks / 1000))
             y = int(round(float(self.speedY) * ticks / 1000))
 
@@ -81,6 +84,9 @@ class Particle:
                 self.thickness = self.size - 1
 
         else:
+            self.firstUpdate = False
+            self.x = self.targetX
+            self.y = self.targetY
             self.clearSpeed()
 
 # Control all the game control
