@@ -1,0 +1,20 @@
+{
+  "0": [
+    {
+      "atX": 100,
+      "atY": 150,
+      "gravityRadius": 230,
+      "gravityForce": 150,
+      "lastTotal": 5
+    }
+  ],
+  "200": [
+    {
+      "atX": 200,
+      "atY": 300,
+      "gravityRadius": 400,
+      "gravityForce": 300,
+      "lastTotal": 5
+    }
+  ]
+}
