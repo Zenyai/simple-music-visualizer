@@ -46,7 +46,7 @@ function create() {
 
     circle = game.add.sprite(0, _HEIGHT - 50, 'circle');
 
-    game.physics.p2.gravity.y = 500
+    game.physics.p2.gravity.y = 500;
     game.physics.p2.enable(circle);
 
     circle.anchor.set(0.5);
@@ -72,6 +72,7 @@ function updateCounter()
       console.log(result)
       moveSpeed = result.speed;
       circle.body.moveUp(result.jump);
+      game.physics.p2.gravity.y = result.gravity;
 	}
 
 	counter++;
@@ -80,5 +81,4 @@ function updateCounter()
 function render() {
     game.debug.cameraInfo(game.camera, 32, 64);
     game.debug.spriteCoords(circle, 32, 150);
-
 }
