@@ -70,9 +70,15 @@ function updateCounter()
 
 	if(result != undefined){
       console.log(result)
-      moveSpeed = result.speed;
-      circle.body.moveUp(result.jump);
-      game.physics.p2.gravity.y = result.gravity;
+
+      if(result.hide == 1){
+        game.add.tween(circle).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
+      } else {
+        game.add.tween(circle).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
+        moveSpeed = result.speed;
+        circle.body.moveUp(result.jump);
+        game.physics.p2.gravity.y = result.gravity;
+      }
 	}
 
 	counter++;
