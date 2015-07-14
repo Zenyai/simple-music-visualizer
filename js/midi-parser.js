@@ -1,0 +1,142 @@
+// Constants
+var ONE_MINUTE_MS = 60000;
+var ONE_MINUTE_S = 60;
+var MPB_CONVERTER = 1000000;
+
+function fetchMidi(path, callback) {
+	var fetch = new XMLHttpRequest();
+	fetch.open('GET', path);
+	fetch.overrideMimeType("text/plain; charset=x-user-defined");
+	fetch.onreadystatechange = function() {
+		if(this.readyState == 4 && this.status == 200) {
+			/* munge response into a binary string */
+			var t = this.responseText || "" ;
+			var ff = [];
+			var mx = t.length;
+			var scc= String.fromCharCode;
+			for (var z = 0; z < mx; z++) {
+				ff[z] = scc(t.charCodeAt(z) & 255);
+			}
+			callback(ff.join(""));
+		}
+	}
+	fetch.send();
+}
+
+function tickToMilliseconds(tick, bpm, resolution) {
+	return (tick * ONE_MINUTE_MS) / (resolution * bpm)
+}
+
+function bpmToMpb(bpm) {
+	return ONE_MINUTE_S * MPB_CONVERTER / bpm
+}
+
+function initMidiFile(midiFile, bpm) {
+	var clone = $.extend({}, midiFile);
+	var microsecondsPerBeat = bpmToMpb(bpm)
+
+	// go through all tracks
+	$.each(clone.tracks, function(i, events) {
+		var newEvents = [];
+
+		// filter out all setTempo events
+		$.each(events, function(j, e) {
+			if (e.type !== "meta" && e.subtype !== "setTempo") {
+				newEvents.push(e);
+			}
+		});
+
+		// create a new setTempo event
+		newEvents.unshift({
+			deltaTime: 0,
+			microsecondsPerBeat: microsecondsPerBeat,
+			subtype: "setTempo",
+			type: "meta"
+		});
+
+		// replace the events in the track
+		clone.tracks[i] = newEvents;
+	});
+
+	// attach bpm to header
+	clone.header.bpm = bpm;
+
+	return clone;
+}
+
+function parseEvents(midiFile, trackNo) {
+	var track = midiFile.tracks[trackNo];
+	var bpm = midiFile.header.bpm;
+	var resolution = midiFile.header.ticksPerBeat;
+
+	var parsed = [];
+	var timePassed = 0.0;
+
+	// loop through the track and parse the events
+	$.each(track, function(i, e) {
+		var tick = e.deltaTime;
+		var milliseconds = tickToMilliseconds(tick, bpm, resolution);
+
+		timePassed += milliseconds;
+
+		var roundedTime = Number((timePassed).toFixed(1));
+
+	    if (e.type === "channel" && e.subtype === "noteOn") {
+	    	parsed.push({
+	    		pitch: e.noteNumber,
+	    		velocity: e.velocity,
+	    		start: roundedTime
+	    	});
+	    }
+	    else if (e.type === "channel" && e.subtype === "noteOff") {
+	    	var cnt = parsed.length - 1;
+			while (cnt > 0) {
+				if (parsed[cnt] && parsed[cnt].pitch == e.noteNumber) {
+					parsed[cnt].end = roundedTime;
+					break;
+				}
+
+				cnt--;
+			}
+	    }
+	});
+
+	return parsed;
+}
+
+function groupEvents(events) {
+	var group = {};
+
+	$.each(events, function(i, e) {
+		if (group[e.start] === undefined) {
+			group[e.start] = [];
+		}
+
+		group[e.start].push(e);
+	});
+
+	return group;
+}
+
+function generateSequence(events, bpm) {
+	var sequence = {};
+	var group = groupEvents(events);
+
+	var interval = ONE_MINUTE_MS / bpm;
+	var endTime = events[events.length - 1].start;
+	var current = 0;
+
+	while (current < endTime + interval) {
+		if (group[current]) {
+			sequence[current] = {
+				jump: 300,
+		      	speed: 150,
+		      	gravity: 500
+			}
+		}
+
+		current += interval
+	}
+
+	return sequence;
+}

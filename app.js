@@ -1,27 +1,53 @@
-// SETTINGS
+/* SETTINGS */
 
-_WIDTH = 1000
-_HEIGHT = 600
+var _WIDTH = 1000
+var _HEIGHT = 600
 
-_BOUND_WIDTH = 1920;
-_BOUND_HEIGHT = 600;
+var _BOUND_WIDTH = 1920;
+var _BOUND_HEIGHT = 600;
 
-
-// END SETTINGS
+/* END SETTINGS */
 
 var game = new Phaser.Game(_WIDTH, _HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });
-var rJson;
 var circle;
-var counter = 0;
 
-var moveSpeed = 0;
 var emitter;
+var moveSpeed = 0;
 var fadeSpeed = 500;
 
+var sequence;
+var counter = 0;
 var started = false;
 
+var file = "midi/minute_waltz.mid";
+var bpm = 120;
+var trackNo = 1;
+
+// fetchMidi(file, function(data) {
+//   // load and initialize midi file
+//   var original = MidiFile(data);
+//   var midiFile = initMidiFile(original, bpm);
+//   //console.log(midiFile);
+
+//   // parse midi events
+//   var parsed = parseEvents(midiFile, trackNo);
+//   //console.log(parsed);
+
+//   // generate sequence
+//   var seq = generateSequence(parsed, bpm);
+//   console.log(seq);
+  
+//   // play the midi
+//   var synth = Synth(44100);
+//   var replayer = Replayer(midiFile, synth);
+//   var audio = AudioPlayer(replayer);
+
+//   sequence = seq;
+//   started = true;
+// });
+
 $.getJSON("example_json/short.json", function(out) {
-  rJson = out;
+  sequence = out;
   started = true;
 });
 
@@ -70,7 +96,8 @@ function updateCounter() {
     return;
   }
 
-	var result = rJson[counter];
+	var result = sequence[counter];
+  console.log(result)
 
 	if(result != undefined){
       console.log(result)
