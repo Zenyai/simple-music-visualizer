@@ -6,18 +6,20 @@
    },
    "100":{
       "jump":300,
-      "speed":150,
+      "speed":300,
       "gravity":500
    },
    "200":{
       "jump":300,
-      "speed":150,
-      "gravity":500
+      "speed":500,
+      "gravity":500,
+      "fadespeed": 150
    },
    "300":{
       "hide": 1
    },
    "50":{
+      "fadespeed": 500,
       "jump":300,
       "speed":150,
       "gravity":500

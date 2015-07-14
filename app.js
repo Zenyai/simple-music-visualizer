@@ -16,6 +16,7 @@ var counter = 0;
 
 var moveSpeed = 0;
 var emitter;
+var fadeSpeed = 500;
 
 $.getJSON("example_json/short.json", function(out) {
     rJson = out;
@@ -71,10 +72,14 @@ function updateCounter()
 	if(result != undefined){
       console.log(result)
 
+      if(result.fadespeed != undefined){
+        fadeSpeed = result.fadespeed
+      }
+
       if(result.hide == 1){
-        game.add.tween(circle).to( { alpha: 0 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
+        game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
       } else {
-        game.add.tween(circle).to( { alpha: 1 }, 500, Phaser.Easing.Linear.None, true, 0, 0, false);
+        game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
         moveSpeed = result.speed;
         circle.body.moveUp(result.jump);
         game.physics.p2.gravity.y = result.gravity;
