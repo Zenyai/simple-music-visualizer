@@ -39,11 +39,16 @@ fetchMidi(file, function(data) {
   var seq = generateSequence(parsed, bpm);
   console.log(seq);
 
+  // play the midi
+  var synth = Synth(44100);
+  var replayer = Replayer(midi, synth);
+  var audio = AudioPlayer(replayer);
+
   // assign value to gloval
   sequence = seq;
   midiFile = midi;
 
-  ready = true;
+  setTimeout(function() { ready = true; }, 500);
 });
 
 // $.getJSON("example_json/short.json", function(out) {
@@ -98,9 +103,9 @@ function updateCounter() {
 
   if (!started) {
     // play the midi
-    var synth = Synth(44100);
-    var replayer = Replayer(midiFile, synth);
-    var audio = AudioPlayer(replayer);
+    // var synth = Synth(44100);
+    // var replayer = Replayer(midiFile, synth);
+    // var audio = AudioPlayer(replayer);
 
     started = true;
   }
