@@ -18,7 +18,9 @@ var moveSpeed = 0;
 var fadeSpeed = 500;
 
 var sequence;
+var midiFile;
 var counter = 0;
+var ready = false;
 var started = false;
 
 var file = "midi/minute_waltz.mid";
@@ -28,29 +30,25 @@ var trackNo = 1;
 fetchMidi(file, function(data) {
   // load and initialize midi file
   var original = MidiFile(data);
-  var midiFile = initMidiFile(original, bpm);
-  //console.log(midiFile);
+  var midi = initMidiFile(original, bpm);
 
   // parse midi events
-  var parsed = parseEvents(midiFile, trackNo);
-  //console.log(parsed);
+  var parsed = parseEvents(midi, trackNo);
 
   // generate sequence
   var seq = generateSequence(parsed, bpm);
   console.log(seq);
-  
-  // play the midi
-  var synth = Synth(44100);
-  var replayer = Replayer(midiFile, synth);
-  var audio = AudioPlayer(replayer);
 
+  // assign value to gloval
   sequence = seq;
-  started = true;
+  midiFile = midi;
+
+  ready = true;
 });
 
 // $.getJSON("example_json/short.json", function(out) {
 //   sequence = out;
-//   started = true;
+//   ready = true;
 // });
 
 function preload() {
@@ -94,40 +92,49 @@ function update() {
 }
 
 function updateCounter() {
-  if (!started) {
+  if (!ready) {
     return;
+  }
+
+  if (!started) {
+    // play the midi
+    var synth = Synth(44100);
+    var replayer = Replayer(midiFile, synth);
+    var audio = AudioPlayer(replayer);
+
+    started = true;
   }
 
 	var currentSeq = sequence[counter];
 
 	if(currentSeq){
-      console.log(currentSeq)
+    console.log(currentSeq)
 
-      if(currentSeq.fadespeed){
-        fadeSpeed = currentSeq.fadespeed
-      }
+    if(currentSeq.fadespeed){
+      fadeSpeed = currentSeq.fadespeed
+    }
 
-      if(currentSeq.gravity){
-          game.physics.p2.gravity.y = currentSeq.gravity;
-      }
+    if(currentSeq.gravity){
+        game.physics.p2.gravity.y = currentSeq.gravity;
+    }
 
-      if(currentSeq.speed){
-          moveSpeed = currentSeq.speed;
-      }
+    if(currentSeq.speed){
+        moveSpeed = currentSeq.speed;
+    }
 
-      if(currentSeq.hide == 1){
-        game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
+    if(currentSeq.hide == 1){
+      game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
+    } 
+    else if(currentSeq.jump) {
+      if(currentSeq.immediate == 1){
+        circle.alpha = 1
+        circle.body.y = circle.y - currentSeq.jump
       } 
-      else if(currentSeq.jump) {
-        if(currentSeq.immediate == 1){
-          circle.alpha = 1
-          circle.body.y = circle.y - currentSeq.jump
-        } 
-        else {
-          game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
-          circle.body.moveUp(currentSeq.jump);
-        }
+      else {
+        game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
+        circle.body.moveUp(currentSeq.jump);
       }
+    }
 	}
 
 	counter += LOOP_INTERVAL;
