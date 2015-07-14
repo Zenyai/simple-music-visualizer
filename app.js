@@ -1,14 +1,16 @@
 /* SETTINGS */
 
-var _WIDTH = 1000
-var _HEIGHT = 600
+var WIDTH = 1000
+var HEIGHT = 600
 
-var _BOUND_WIDTH = 1920;
-var _BOUND_HEIGHT = 600;
+var BOUND_WIDTH = 1920;
+var BOUND_HEIGHT = 600;
+
+var LOOP_INTERVAL = 100;
 
 /* END SETTINGS */
 
-var game = new Phaser.Game(_WIDTH, _HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });
+var game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });
 var circle;
 
 var emitter;
@@ -23,33 +25,33 @@ var file = "midi/minute_waltz.mid";
 var bpm = 120;
 var trackNo = 1;
 
-// fetchMidi(file, function(data) {
-//   // load and initialize midi file
-//   var original = MidiFile(data);
-//   var midiFile = initMidiFile(original, bpm);
-//   //console.log(midiFile);
+fetchMidi(file, function(data) {
+  // load and initialize midi file
+  var original = MidiFile(data);
+  var midiFile = initMidiFile(original, bpm);
+  //console.log(midiFile);
 
-//   // parse midi events
-//   var parsed = parseEvents(midiFile, trackNo);
-//   //console.log(parsed);
+  // parse midi events
+  var parsed = parseEvents(midiFile, trackNo);
+  //console.log(parsed);
 
-//   // generate sequence
-//   var seq = generateSequence(parsed, bpm);
-//   console.log(seq);
+  // generate sequence
+  var seq = generateSequence(parsed, bpm);
+  console.log(seq);
   
-//   // play the midi
-//   var synth = Synth(44100);
-//   var replayer = Replayer(midiFile, synth);
-//   var audio = AudioPlayer(replayer);
+  // play the midi
+  var synth = Synth(44100);
+  var replayer = Replayer(midiFile, synth);
+  var audio = AudioPlayer(replayer);
 
-//   sequence = seq;
-//   started = true;
-// });
-
-$.getJSON("example_json/short.json", function(out) {
-  sequence = out;
+  sequence = seq;
   started = true;
 });
+
+// $.getJSON("example_json/short.json", function(out) {
+//   sequence = out;
+//   started = true;
+// });
 
 function preload() {
   this.game.stage.backgroundColor = '#000000';
@@ -60,9 +62,9 @@ function preload() {
 
 function create() {
   game.physics.startSystem(Phaser.Physics.P2JS);
-  game.world.setBounds(0, 0, _BOUND_WIDTH, _BOUND_HEIGHT);
+  game.world.setBounds(0, 0, BOUND_WIDTH, BOUND_HEIGHT);
 
-  var background = game.add.tileSprite(0, 0, _BOUND_WIDTH, _BOUND_HEIGHT, 'grid');
+  var background = game.add.tileSprite(0, 0, BOUND_WIDTH, BOUND_HEIGHT, 'grid');
 
   emitter = game.add.emitter(0, 0, 200);
   emitter.makeParticles('particle')
@@ -71,7 +73,7 @@ function create() {
   emitter.gravity = 0;
   //emitter.start(false, 500, 50);
 
-  circle = game.add.sprite(0, _HEIGHT - 50, 'circle');
+  circle = game.add.sprite(0, HEIGHT - 50, 'circle');
 
   game.physics.p2.gravity.y = 500;
   game.physics.p2.enable(circle);
@@ -80,7 +82,7 @@ function create() {
   circle.body.setCircle(15);
   circle.body.collideWorldBounds = true;
 
-  game.time.events.loop(1, updateCounter, this);
+  game.time.events.loop(LOOP_INTERVAL, updateCounter, this);
   game.camera.follow(circle);
 }
 
@@ -97,7 +99,7 @@ function updateCounter() {
   }
 
 	var currentSeq = sequence[counter];
-  
+
 	if(currentSeq){
       console.log(currentSeq)
 
@@ -128,7 +130,7 @@ function updateCounter() {
       }
 	}
 
-	counter++;
+	counter += LOOP_INTERVAL;
 }
 
 function render() {
