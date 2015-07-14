@@ -1,13 +1,13 @@
-
-
 // SETTINGS
 
 _WIDTH = 1000
 _HEIGHT = 600
 
+_BOUND_WIDTH = 1920;
+_BOUND_HEIGHT = 600;
+
 
 // END SETTINGS
-
 
 var game = new Phaser.Game(_WIDTH, _HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });
 var rJson;
@@ -18,55 +18,58 @@ var moveSpeed = 0;
 var emitter;
 var fadeSpeed = 500;
 
+var started = false;
+
 $.getJSON("example_json/short.json", function(out) {
-    rJson = out;
+  rJson = out;
+  started = true;
 });
 
 function preload() {
-
-    this.game.stage.backgroundColor = '#000000';
-    game.load.image('circle', 'img/circle.png');
-    game.load.image('particle', 'img/blue.png');
-    game.load.image("grid", "img/grid.bmp");
-
+  this.game.stage.backgroundColor = '#000000';
+  game.load.image('circle', 'img/circle.png');
+  game.load.image('particle', 'img/blue.png');
+  game.load.image("grid", "img/grid.bmp");
 }
 
 function create() {
+  game.physics.startSystem(Phaser.Physics.P2JS);
+  game.world.setBounds(0, 0, _BOUND_WIDTH, _BOUND_HEIGHT);
 
-    game.physics.startSystem(Phaser.Physics.P2JS);
-    game.world.setBounds(0, 0, 1920, 600);
+  var background = game.add.tileSprite(0, 0, _BOUND_WIDTH, _BOUND_HEIGHT, 'grid');
 
-    var background = game.add.tileSprite(0, 0, 1920, 600, 'grid');
+  emitter = game.add.emitter(0, 0, 200);
+  emitter.makeParticles('particle')
+  emitter.setAlpha(0.3, 0.8);
+  emitter.setScale(0.1, 0.1);
+  emitter.gravity = 0;
+  //emitter.start(false, 500, 50);
 
-    emitter = game.add.emitter(0, 0, 200);
-    emitter.makeParticles('particle')
-    emitter.setAlpha(0.3, 0.8);
-    emitter.setScale(0.1, 0.1);
-    emitter.gravity = 0;
-    //emitter.start(false, 500, 50);
+  circle = game.add.sprite(0, _HEIGHT - 50, 'circle');
 
-    circle = game.add.sprite(0, _HEIGHT - 50, 'circle');
+  game.physics.p2.gravity.y = 500;
+  game.physics.p2.enable(circle);
 
-    game.physics.p2.gravity.y = 500;
-    game.physics.p2.enable(circle);
+  circle.anchor.set(0.5);
+  circle.body.setCircle(15);
+  circle.body.collideWorldBounds = true;
 
-    circle.anchor.set(0.5);
-    circle.body.setCircle(15);
-    circle.body.collideWorldBounds = true;
-
-    game.time.events.loop(1, updateCounter, this);
-    game.camera.follow(circle);
+  game.time.events.loop(1, updateCounter, this);
+  game.camera.follow(circle);
 }
 
 function update() {
-    emitter.x = circle.x
-    emitter.y = circle.y
+  emitter.x = circle.x
+  emitter.y = circle.y
 
-    circle.body.moveRight(moveSpeed);
+  circle.body.moveRight(moveSpeed);
 }
 
-function updateCounter()
-{
+function updateCounter() {
+  if (!started) {
+    return;
+  }
+
 	var result = rJson[counter];
 
 	if(result != undefined){
@@ -101,6 +104,6 @@ function updateCounter()
 }
 
 function render() {
-    game.debug.cameraInfo(game.camera, 32, 64);
-    game.debug.spriteCoords(circle, 32, 150);
+  game.debug.cameraInfo(game.camera, 32, 64);
+  game.debug.spriteCoords(circle, 32, 150);
 }
