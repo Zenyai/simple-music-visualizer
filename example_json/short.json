@@ -19,13 +19,15 @@
       "hide": 1
    },
    "50":{
+      "immediate": 1,
       "fadespeed": 500,
       "jump":300,
       "speed":150,
       "gravity":500
    },
    "150":{
-      "jump":300,
+      "immediate": 1,
+      "jump":50,
       "speed":150,
       "gravity":500
    },

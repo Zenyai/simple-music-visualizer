@@ -76,13 +76,24 @@ function updateCounter()
         fadeSpeed = result.fadespeed
       }
 
+      if(result.gravity != undefined){
+          game.physics.p2.gravity.y = result.gravity;
+      }
+
+      if(result.speed != undefined){
+          moveSpeed = result.speed;
+      }
+
       if(result.hide == 1){
         game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
       } else {
-        game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
-        moveSpeed = result.speed;
-        circle.body.moveUp(result.jump);
-        game.physics.p2.gravity.y = result.gravity;
+        if(result.immediate == 1){
+          circle.alpha = 1
+          circle.body.y = circle.y - result.jump
+        } else {
+          game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
+          circle.body.moveUp(result.jump);
+        }
       }
 	}
 
