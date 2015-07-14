@@ -18,6 +18,9 @@
    "300":{
       "hide": 1
    },
+   "320":{
+     "gravity": 200
+   },
    "50":{
       "immediate": 1,
       "fadespeed": 500,

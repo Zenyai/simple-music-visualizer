@@ -86,7 +86,7 @@ function updateCounter()
 
       if(result.hide == 1){
         game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
-      } else {
+      } else if(result.jump != undefined) {
         if(result.immediate == 1){
           circle.alpha = 1
           circle.body.y = circle.y - result.jump
