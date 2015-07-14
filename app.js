@@ -96,33 +96,34 @@ function updateCounter() {
     return;
   }
 
-	var result = sequence[counter];
-  console.log(result)
+	var currentSeq = sequence[counter];
+  
+	if(currentSeq){
+      console.log(currentSeq)
 
-	if(result != undefined){
-      console.log(result)
-
-      if(result.fadespeed != undefined){
-        fadeSpeed = result.fadespeed
+      if(currentSeq.fadespeed){
+        fadeSpeed = currentSeq.fadespeed
       }
 
-      if(result.gravity != undefined){
-          game.physics.p2.gravity.y = result.gravity;
+      if(currentSeq.gravity){
+          game.physics.p2.gravity.y = currentSeq.gravity;
       }
 
-      if(result.speed != undefined){
-          moveSpeed = result.speed;
+      if(currentSeq.speed){
+          moveSpeed = currentSeq.speed;
       }
 
-      if(result.hide == 1){
+      if(currentSeq.hide == 1){
         game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
-      } else if(result.jump != undefined) {
-        if(result.immediate == 1){
+      } 
+      else if(currentSeq.jump) {
+        if(currentSeq.immediate == 1){
           circle.alpha = 1
-          circle.body.y = circle.y - result.jump
-        } else {
+          circle.body.y = circle.y - currentSeq.jump
+        } 
+        else {
           game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
-          circle.body.moveUp(result.jump);
+          circle.body.moveUp(currentSeq.jump);
         }
       }
 	}
