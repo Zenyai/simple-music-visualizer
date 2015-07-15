@@ -79,7 +79,7 @@ function parseEvents(midiFile, trackNo) {
 
 		timePassed += milliseconds;
 
-		var roundedTime = Number((timePassed).toFixed(1));
+		var roundedTime = Math.floor(timePassed);
 
 	    if (e.type === "channel" && e.subtype === "noteOn") {
 	    	parsed.push({
@@ -122,7 +122,7 @@ function generateSequence(events, bpm) {
 	var sequence = {};
 	var group = groupEvents(events);
 
-	var interval = ONE_MINUTE_MS / bpm;
+	var interval = Math.floor(ONE_MINUTE_MS / bpm);
 	var endTime = events[events.length - 1].start;
 	var current = 0;
 

@@ -6,7 +6,7 @@ var HEIGHT = 600
 var BOUND_WIDTH = 1000000;
 var BOUND_HEIGHT = 600;
 
-var LOOP_INTERVAL = 10;
+var LOOP_INTERVAL = 5;
 
 /* END SETTINGS */
 
@@ -25,7 +25,7 @@ var ready = false;
 var started = false;
 
 var file = "midi/minute_waltz.mid";
-var bpm = 60;
+var bpm = 80;
 var trackNo = 1;
 
 fetchMidi(file, function(data) {
@@ -120,34 +120,35 @@ function fixedUpdate() {
     started = true;
   }
 
-	var currentSeq = sequence[counter];
+	var currentEvent = sequence[counter];
 
-	if(currentSeq){
-    console.log(currentSeq)
+  //console.log(timer.lap())
+	if(currentEvent){
+    console.log(currentEvent)
 
-    if(currentSeq.fadespeed){
-      fadeSpeed = currentSeq.fadespeed
+    if(currentEvent.fadespeed){
+      fadeSpeed = currentEvent.fadespeed
     }
 
-    if(currentSeq.gravity){
-        game.physics.p2.gravity.y = currentSeq.gravity;
+    if(currentEvent.gravity){
+        game.physics.p2.gravity.y = currentEvent.gravity;
     }
 
-    if(currentSeq.speed){
-        moveSpeed = currentSeq.speed;
+    if(currentEvent.speed){
+        moveSpeed = currentEvent.speed;
     }
 
-    if(currentSeq.hide == 1){
+    if(currentEvent.hide == 1){
       game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
     } 
-    else if(currentSeq.jump) {
-      if(currentSeq.immediate == 1){
+    else if(currentEvent.jump) {
+      if(currentEvent.immediate == 1){
         circle.alpha = 1
-        circle.body.y = circle.y - currentSeq.jump
+        circle.body.y = circle.y - currentEvent.jump
       } 
       else {
         game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
-        circle.body.moveUp(currentSeq.jump);
+        circle.body.moveUp(currentEvent.jump);
       }
     }
 	}
