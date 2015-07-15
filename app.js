@@ -22,16 +22,15 @@ var fadeSpeed = 500;
 
 var synth, replayer, audio;
 
-var midiFile, sequence;
-var lastEvent;
+var midiFile, sequence, lastEvent;
 var counter = 0;
 var ready = false;
 var started = false;
 var finished = false;
 
-var file = "midi/scale_velo.mid";
+var file = "midi/minute_waltz.mid";
 var bpm = 60;
-var trackNo = 0;
+var trackNo = 1;
 
 fetchMidi(file, function(data) {
   // load and initialize midi file
