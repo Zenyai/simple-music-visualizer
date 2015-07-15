@@ -6,11 +6,12 @@ var HEIGHT = 600
 var BOUND_WIDTH = 1920;
 var BOUND_HEIGHT = 600;
 
-var LOOP_INTERVAL = 100;
+var LOOP_INTERVAL = 10;
 
 /* END SETTINGS */
 
 var game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });
+var timer;
 var circle;
 
 var emitter;
@@ -24,7 +25,7 @@ var ready = false;
 var started = false;
 
 var file = "midi/minute_waltz.mid";
-var bpm = 120;
+var bpm = 60;
 var trackNo = 1;
 
 fetchMidi(file, function(data) {
@@ -85,8 +86,18 @@ function create() {
   circle.body.setCircle(15);
   circle.body.collideWorldBounds = true;
 
-  game.time.events.loop(LOOP_INTERVAL, updateCounter, this);
+  //game.time.events.loop(LOOP_INTERVAL, updateCounter, this);
   game.camera.follow(circle);
+
+  // create timer
+  timer = new Tock({
+    interval: LOOP_INTERVAL,
+    callback: fixedUpdate,
+    //complete: someCompleteFunction
+  });
+
+  // start timer
+  timer.start();
 }
 
 function update() {
@@ -96,13 +107,12 @@ function update() {
   circle.body.moveRight(moveSpeed);
 }
 
-function updateCounter() {
+function fixedUpdate() {
   if (!ready) {
     return;
   }
 
   if (!started) {
-    // play the midi
     // var synth = Synth(44100);
     // var replayer = Replayer(midiFile, synth);
     // var audio = AudioPlayer(replayer);
