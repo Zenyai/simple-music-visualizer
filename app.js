@@ -20,15 +20,18 @@ var emitter;
 var moveSpeed = 0;
 var fadeSpeed = 500;
 
-var sequence;
-var midiFile;
+var synth, replayer, audio;
+
+var midiFile, sequence;
+var lastEvent;
 var counter = 0;
 var ready = false;
 var started = false;
+var finished = false;
 
-var file = "midi/minute_waltz.mid";
+var file = "midi/scale_velo.mid";
 var bpm = 60;
-var trackNo = 1;
+var trackNo = 0;
 
 fetchMidi(file, function(data) {
   // load and initialize midi file
@@ -43,9 +46,9 @@ fetchMidi(file, function(data) {
   console.log(seq);
 
   // play the midi
-  var synth = Synth(44100);
-  var replayer = Replayer(midi, synth);
-  var audio = AudioPlayer(replayer);
+  synth = Synth(44100);
+  replayer = Replayer(midi, synth);
+  audio = AudioPlayer(replayer);
 
   // assign value to gloval
   sequence = seq;
@@ -106,14 +109,18 @@ function update() {
   emitter.x = circle.x
   emitter.y = circle.y
 
-  circle.body.moveRight(moveSpeed);
+  if (!finished) {
+    circle.body.moveRight(moveSpeed);
+  }
 }
 
 function fixedUpdate() {
-  if (!ready) {
+  // Ignore if not ready or finished
+  if (!ready || finished) {
     return;
   }
 
+  // Initialize first update
   if (!started) {
     // var synth = Synth(44100);
     // var replayer = Replayer(midiFile, synth);
@@ -122,9 +129,22 @@ function fixedUpdate() {
     started = true;
   }
 
+  // When song ends
+  if (replayer.finished) {
+    setTimeout(function() { 
+      finished = true;
+
+      game.physics.p2.gravity.y = 10000;
+      game.add.tween(circle).to( { alpha: 0 }, 250, Phaser.Easing.Linear.None, true, 0, 0, false);
+      //circle.body.static = true;
+    }, 1000);
+  }
+
+  // Fetch current event from sequence
 	var currentEvent = sequence[counter];
 
   //console.log(timer.lap())
+
 	if(currentEvent){
     console.log(currentEvent)
 
@@ -133,11 +153,11 @@ function fixedUpdate() {
     }
 
     if(currentEvent.gravity){
-        game.physics.p2.gravity.y = currentEvent.gravity;
+      game.physics.p2.gravity.y = currentEvent.gravity;
     }
 
     if(currentEvent.speed){
-        moveSpeed = currentEvent.speed;
+      moveSpeed = currentEvent.speed;
     }
 
     if(currentEvent.hide == 1){
@@ -158,6 +178,9 @@ function fixedUpdate() {
         circle.body.moveUp(jumpVal);
       }
     }
+
+    // cache the event
+    lastEvent = currentEvent;
 	}
 
 	counter += LOOP_INTERVAL;
@@ -166,4 +189,8 @@ function fixedUpdate() {
 function render() {
   game.debug.cameraInfo(game.camera, 32, 64);
   game.debug.spriteCoords(circle, 32, 150);
+
+  if (lastEvent) {
+    game.debug.text(JSON.stringify(lastEvent), 32, 210, "rgba(0,255,0,0.5)", "13pt");
+  }
 }
