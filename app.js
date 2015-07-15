@@ -8,6 +8,8 @@ var BOUND_HEIGHT = 740;
 
 var LOOP_INTERVAL = 5;
 
+var INVERT_JUMP_THRESHOLD = 100.0;
+
 /* END SETTINGS */
 
 var game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });
@@ -142,13 +144,18 @@ function fixedUpdate() {
       game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
     } 
     else if(currentEvent.jump) {
+      var jumpVal = currentEvent.jump;
+      if (circle.y <= INVERT_JUMP_THRESHOLD) {
+        jumpVal *= -1;
+      }
+
       if(currentEvent.immediate == 1){
-        circle.alpha = 1
-        circle.body.y = circle.y - currentEvent.jump
+        circle.alpha = 1;
+        circle.body.y = circle.y - jumpVal;
       } 
       else {
         game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
-        circle.body.moveUp(currentEvent.jump);
+        circle.body.moveUp(jumpVal);
       }
     }
 	}
