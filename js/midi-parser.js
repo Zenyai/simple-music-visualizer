@@ -127,11 +127,70 @@ function generateSequence(events, bpm) {
 	var current = 0;
 
 	while (current < endTime + interval) {
-		if (group[current]) {
+		var e = group[current];
+
+		if (e) {
+			var jump = function() {
+				var sum = 0;
+				$.each(e, function(k, v) {
+					sum += v.velocity;
+				});
+
+				return ((sum / e.length) * 10) - 120;
+			};
+
+			var speed = function() {
+				var normal = 150;
+				var addValue = 15;
+
+				var prev = group[current - interval];
+
+				if (prev) {
+					var prevMaxPitch = -1;
+					for (i in prev) {
+						if (prev[i].pitch > prevMaxPitch) {
+							prevMaxPitch = prev[i].pitch;
+						}
+					}
+
+					var maxPitch = -1;
+					for (i in e) {
+						if (e[i].pitch > maxPitch) {
+							maxPitch = e[i].pitch;
+						}
+					}
+					
+					if (maxPitch - prevMaxPitch > 0) {
+						return normal + 20;
+					}
+					else {
+						return normal - 20;
+					}
+				}
+
+				return normal;
+			};
+
+			var gravity = function() {
+				var sum = 0;
+				$.each(e, function(k, v) {
+					sum += v.pitch;
+				});
+
+				return ((sum / e.length) * 10) + 40;
+			};
+
+			// insert event into sequence
 			sequence[current] = {
-				jump: 300,
-		      	speed: 150,
-		      	gravity: 500
+				jump: jump(),
+		      	speed: speed(),
+		      	gravity: gravity()
+			}
+		}
+		else {
+			// insert event into sequence
+			sequence[current] = {
+				hide: 1
 			}
 		}
 
