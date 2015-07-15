@@ -127,7 +127,7 @@ function generateSequence(events, bpm) {
 	// 4: 1/16
 	var slice = 2;
 
-	var interval = Math.round(ONE_MINUTE_MS / bpm / slice;
+	var interval = Math.round(ONE_MINUTE_MS / bpm / slice);
 	var endTime = events[events.length - 1].start;
 	var current = 0;
 
