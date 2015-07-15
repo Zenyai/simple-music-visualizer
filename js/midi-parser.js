@@ -122,7 +122,12 @@ function generateSequence(events, bpm) {
 	var sequence = {};
 	var group = groupEvents(events);
 
-	var interval = Math.floor(ONE_MINUTE_MS / bpm);
+	// 1: 1/4
+	// 2: 1/8
+	// 4: 1/16
+	var slice = 2;
+
+	var interval = Math.floor(ONE_MINUTE_MS / bpm / slice);
 	var endTime = events[events.length - 1].start;
 	var current = 0;
 
@@ -136,7 +141,7 @@ function generateSequence(events, bpm) {
 					sum += v.velocity;
 				});
 
-				return ((sum / e.length) * 10) - 120;
+				return ((sum / e.length) * 10) - 180;
 			};
 
 			var speed = function() {
@@ -161,10 +166,10 @@ function generateSequence(events, bpm) {
 					}
 					
 					if (maxPitch - prevMaxPitch > 0) {
-						return normal + 20;
+						return normal + addValue;
 					}
 					else {
-						return normal - 20;
+						return normal - addValue;
 					}
 				}
 
@@ -177,7 +182,7 @@ function generateSequence(events, bpm) {
 					sum += v.pitch;
 				});
 
-				return ((sum / e.length) * 8) + Math.floor(jump());
+				return ((sum / e.length) * 10) + Math.floor(jump());
 			};
 
 			// insert event into sequence

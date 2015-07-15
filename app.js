@@ -1,10 +1,10 @@
 /* SETTINGS */
 
 var WIDTH = 1000
-var HEIGHT = 600
+var HEIGHT = 740
 
 var BOUND_WIDTH = 1000000;
-var BOUND_HEIGHT = 600;
+var BOUND_HEIGHT = 740;
 
 var LOOP_INTERVAL = 5;
 
@@ -25,7 +25,7 @@ var ready = false;
 var started = false;
 
 var file = "midi/minute_waltz.mid";
-var bpm = 80;
+var bpm = 60;
 var trackNo = 1;
 
 fetchMidi(file, function(data) {
