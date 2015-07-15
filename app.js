@@ -48,6 +48,7 @@ fetchMidi(file, function(data) {
   synth = Synth(44100);
   replayer = Replayer(midi, synth);
   audio = AudioPlayer(replayer);
+  //audio = AudioPlayer(replayer, {'latency': 0.5});
 
   // assign value to gloval
   sequence = seq;
