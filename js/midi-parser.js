@@ -177,7 +177,7 @@ function generateSequence(events, bpm) {
 					sum += v.pitch;
 				});
 
-				return ((sum / e.length) * 10) + 40;
+				return ((sum / e.length) * 8) + Math.floor(jump());
 			};
 
 			// insert event into sequence
