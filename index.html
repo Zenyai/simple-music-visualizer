@@ -47,6 +47,16 @@
               <h6><b>MIDI file must be located inside the "midi" folder.</b> Press (Ctrl + Shift + S) to show this panel again.</h6>
               <br/><b>MIDI File to be visualize:</b><br/>
               <p><input type="file" name="midiFile" id="midiFile"></p>
+              <div style="margin-top:20px;">
+                <div class="form-group">
+                  <label for="track">Track Number:</label>
+                  <input type="text" id="track" class="form-control" value="1">
+                </div>
+                <div class="form-group">
+                  <label for="bpm">BPM:</label>
+                  <input type="text" id="bpm" class="form-control" value="80">
+                </div>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-success" data-dismiss="modal" onclick="loadGame()">Play Visualization</button>
@@ -74,13 +84,26 @@
     });
 
     function loadGame(){
-      if($('#midiFile').val() != ""){
+      if($('#midiFile').val() != "") {
         file = "midi/" + $('input[type=file]').val().replace(/C:\\fakepath\\/i, '');
         game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });
       }
-    }
 
-    var file, game;
+      if ($('#track').val() != "") {
+        trackNo = Number($('#track').val()) - 1;
+      }
+      else {
+        trackNo = 0;
+      }
+
+      if ($('#bpm').val() != "") {
+        bpm = Number($('#bpm').val());
+      }
+      else {
+        bpm = 80;
+      }
+    }
+    
     $('#settingModal').modal('show');
 
     //var game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });

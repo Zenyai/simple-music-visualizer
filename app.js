@@ -44,9 +44,6 @@ var ready = false;
 var started = false;
 var finished = false;
 
-var bpm = 60;
-var trackNo = 1;
-
 function preload() {
 
   counter = 0;
