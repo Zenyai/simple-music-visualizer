@@ -25,6 +25,7 @@ DEFAULT_PROGRAM = CustomProgram = {
   }
 };
 
+// NOTE: REMOVE THIS LINE TO USE CUSTOM SYNTH PROGRAM
 DEFAULT_PROGRAM = PianoProgram;
 
 /* END SETTINGS */
@@ -43,7 +44,6 @@ var ready = false;
 var started = false;
 var finished = false;
 
-//var file = "midi/minute_waltz.mid";
 var bpm = 60;
 var trackNo = 1;
 
