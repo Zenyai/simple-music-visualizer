@@ -141,11 +141,11 @@ function fixedUpdate() {
   }
 
   // Fetch current event from sequence
-	var currentEvent = sequence[counter];
+  var currentEvent = sequence[counter];
 
   //console.log(timer.lap())
 
-	if(currentEvent){
+  if(currentEvent){
     console.log(currentEvent)
 
     if(currentEvent.fadespeed){
@@ -181,9 +181,9 @@ function fixedUpdate() {
 
     // cache the event
     lastEvent = currentEvent;
-	}
+  }
 
-	counter += LOOP_INTERVAL;
+  counter += LOOP_INTERVAL;
 }
 
 function render() {
