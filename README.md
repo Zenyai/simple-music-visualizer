@@ -6,11 +6,13 @@ There are many ways that music can be visualize and this is only one of them.
 
 
 ## Demo
-URL HERE
+https://youtu.be/_FiIMCw4FoE
 
 
 ## Setup and Usage
-...
+For Mac OSX, open RunSMV.app to trigger Terminal to start the application. Your web browser will open with the page loaded and ready to use.
+
+* Note: Press Ctrl+C in Terminal to stop running the web server. *
 
 
 ## How it works
