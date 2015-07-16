@@ -7,12 +7,9 @@ var BOUND_WIDTH = 1000000;
 var BOUND_HEIGHT = 740;
 
 var LOOP_INTERVAL = 5;
-
 var INVERT_JUMP_THRESHOLD = 100.0;
 
 /* END SETTINGS */
-
-var game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });
 var timer;
 var circle;
 
@@ -28,41 +25,50 @@ var ready = false;
 var started = false;
 var finished = false;
 
-var file = "midi/minute_waltz.mid";
+//var file = "midi/minute_waltz.mid";
 var bpm = 60;
 var trackNo = 1;
 
-fetchMidi(file, function(data) {
-  // load and initialize midi file
-  var original = MidiFile(data);
-  var midi = initMidiFile(original, bpm);
+var original, midi, parsed, seq;
 
-  // parse midi events
-  var parsed = parseEvents(midi, trackNo);
 
-  // generate sequence
-  var seq = generateSequence(parsed, bpm);
-  console.log(seq);
-
-  // play the midi
-  synth = Synth(44100);
-  replayer = Replayer(midi, synth);
-  audio = AudioPlayer(replayer);
-  //audio = AudioPlayer(replayer, {'latency': 0.5});
-
-  // assign value to gloval
-  sequence = seq;
-  midiFile = midi;
-
-  setTimeout(function() { ready = true; }, 500);
-});
-
-// $.getJSON("example_json/short.json", function(out) {
-//   sequence = out;
-//   ready = true;
-// });
+console.log(file);
 
 function preload() {
+
+  counter = 0;
+  ready = false;
+  started = false;
+  finished = false;
+  moveSpeed = 0;
+  fadeSpeed = 500;
+
+  fetchMidi(file, function(data) {
+    // load and initialize midi file
+    original = MidiFile(data);
+    midi = initMidiFile(original, bpm);
+
+    // parse midi events
+    parsed = parseEvents(midi, trackNo);
+
+    // generate sequence
+    seq = generateSequence(parsed, bpm);
+    console.log(seq);
+
+    // play the midi
+    synth = Synth(44100);
+    replayer = Replayer(midi, synth);
+    audio = AudioPlayer(replayer);
+    //audio = AudioPlayer(replayer, {'latency': 0.5});
+
+    // assign value to gloval
+    sequence = seq;
+    midiFile = midi;
+
+    setTimeout(function() { ready = true; }, 500);
+  });
+
+
   this.game.stage.backgroundColor = '#000000';
   game.load.image('circle', 'img/circle.png');
   game.load.image('particle', 'img/blue.png');
@@ -131,7 +137,7 @@ function fixedUpdate() {
 
   // When song ends
   if (replayer.finished) {
-    setTimeout(function() { 
+    setTimeout(function() {
       finished = true;
 
       game.physics.p2.gravity.y = 10000;
@@ -162,7 +168,7 @@ function fixedUpdate() {
 
     if(currentEvent.hide == 1){
       game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
-    } 
+    }
     else if(currentEvent.jump) {
       var jumpVal = currentEvent.jump;
       if (circle.y <= INVERT_JUMP_THRESHOLD) {
@@ -172,7 +178,7 @@ function fixedUpdate() {
       if(currentEvent.immediate == 1){
         circle.alpha = 1;
         circle.body.y = circle.y - jumpVal;
-      } 
+      }
       else {
         game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
         circle.body.moveUp(jumpVal);
