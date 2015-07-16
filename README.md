@@ -1,6 +1,5 @@
 #Simple Music Visualizer
 
-## Introduction
 The goal of this project is to visualize the relationship between motion and music from a given MIDI file using simple animations. We believed that music can not only be heard but can also be felt. This means that our can minds somehow interpret those sound waves into something that we can make sense of.
 
 There are many ways that music can be visualize and this is only one of them.
