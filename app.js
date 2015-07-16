@@ -10,6 +10,26 @@ var LOOP_INTERVAL = 5;
 
 var INVERT_JUMP_THRESHOLD = 100.0;
 
+// Default custom synth program
+DEFAULT_PROGRAM = CustomProgram = {
+  'attackAmplitude': 0.18,
+  'sustainAmplitude': 0.08,
+  'attackTime': 0.01,
+  'decayTime': 0.3,
+  'releaseTime': 0.04,
+  'phase': 0.75,
+  'createNote': function(note, velocity) {
+    var frequency = midiToFrequency(note);
+    return ADSRGenerator(
+      SquareGenerator(frequency, this.phase),
+      this.attackAmplitude * (velocity / 128), this.sustainAmplitude * (velocity / 128),
+      this.attackTime, this.decayTime, this.releaseTime
+    );
+  }
+};
+
+DEFAULT_PROGRAM = PianoProgram;
+
 /* END SETTINGS */
 
 var game = new Phaser.Game(WIDTH, HEIGHT, Phaser.AUTO, 'music-visualization', { preload: preload, create: create, update: update, render: render });
@@ -32,6 +52,7 @@ var file = "midi/minute_waltz.mid";
 var bpm = 60;
 var trackNo = 1;
 
+// Load MIDI file and trigger ready flag on complete
 fetchMidi(file, function(data) {
   // load and initialize midi file
   var original = MidiFile(data);
@@ -56,11 +77,6 @@ fetchMidi(file, function(data) {
 
   setTimeout(function() { ready = true; }, 500);
 });
-
-// $.getJSON("example_json/short.json", function(out) {
-//   sequence = out;
-//   ready = true;
-// });
 
 function preload() {
   this.game.stage.backgroundColor = '#000000';
