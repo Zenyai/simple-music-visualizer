@@ -1,10 +1,10 @@
 /* SETTINGS */
 
 var WIDTH = 1000
-var HEIGHT = 600
+var HEIGHT = 500
 
 var BOUND_WIDTH = 1000000;
-var BOUND_HEIGHT = 600;
+var BOUND_HEIGHT = 5000;
 
 var LOOP_INTERVAL = 10;
 
@@ -77,7 +77,7 @@ function create() {
   emitter.gravity = 0;
   //emitter.start(false, 500, 50);
 
-  circle = game.add.sprite(0, HEIGHT - 50, 'circle');
+  circle = game.add.sprite(0, BOUND_HEIGHT - 50, 'circle');
 
   game.physics.p2.gravity.y = 500;
   game.physics.p2.enable(circle);
@@ -86,7 +86,7 @@ function create() {
   circle.body.setCircle(15);
   circle.body.collideWorldBounds = true;
 
-  //game.time.events.loop(LOOP_INTERVAL, updateCounter, this);
+  //game.time.events.loop(LOOP_INTERVAL,wa  updateCounter, this);
   game.camera.follow(circle);
 
   // create timer
@@ -139,12 +139,12 @@ function fixedUpdate() {
 
     if(currentSeq.hide == 1){
       game.add.tween(circle).to( { alpha: 0 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
-    } 
+    }
     else if(currentSeq.jump) {
       if(currentSeq.immediate == 1){
         circle.alpha = 1
         circle.body.y = circle.y - currentSeq.jump
-      } 
+      }
       else {
         game.add.tween(circle).to( { alpha: 1 }, fadeSpeed, Phaser.Easing.Linear.None, true, 0, 0, false);
         circle.body.moveUp(currentSeq.jump);
