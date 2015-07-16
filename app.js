@@ -1,13 +1,31 @@
-/* SETTINGS */
-
-var WIDTH = 1000
-var HEIGHT = 740
+var WIDTH = 1000;
+var HEIGHT = 740;
 
 var BOUND_WIDTH = 1000000;
 var BOUND_HEIGHT = 740;
 
 var LOOP_INTERVAL = 5;
 var INVERT_JUMP_THRESHOLD = 100.0;
+
+// Default custom synth program
+DEFAULT_PROGRAM = CustomProgram = {
+  'attackAmplitude': 0.18,
+  'sustainAmplitude': 0.08,
+  'attackTime': 0.01,
+  'decayTime': 0.3,
+  'releaseTime': 0.04,
+  'phase': 0.75,
+  'createNote': function(note, velocity) {
+    var frequency = midiToFrequency(note);
+    return ADSRGenerator(
+      SquareGenerator(frequency, this.phase),
+      this.attackAmplitude * (velocity / 128), this.sustainAmplitude * (velocity / 128),
+      this.attackTime, this.decayTime, this.releaseTime
+    );
+  }
+};
+
+DEFAULT_PROGRAM = PianoProgram;
 
 /* END SETTINGS */
 var timer;
@@ -19,7 +37,7 @@ var fadeSpeed = 500;
 
 var synth, replayer, audio;
 
-var midiFile, sequence, lastEvent;
+var midi, midiFile, sequence, lastEvent;
 var counter = 0;
 var ready = false;
 var started = false;
@@ -28,11 +46,6 @@ var finished = false;
 //var file = "midi/minute_waltz.mid";
 var bpm = 60;
 var trackNo = 1;
-
-var original, midi, parsed, seq;
-
-
-console.log(file);
 
 function preload() {
 

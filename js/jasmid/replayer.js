@@ -18,7 +18,7 @@ function Replayer(midiFile, synth) {
 	function Channel() {
 		
 		var generatorsByNote = {};
-		var currentProgram = PianoProgram;
+		var currentProgram = DEFAULT_PROGRAM;
 		
 		function noteOn(note, velocity) {
 			if (generatorsByNote[note] && !generatorsByNote[note].released) {
@@ -35,7 +35,7 @@ function Replayer(midiFile, synth) {
 			}
 		}
 		function setProgram(programNumber) {
-			currentProgram = PROGRAMS[programNumber] || PianoProgram;
+			currentProgram = PROGRAMS[programNumber] || DEFAULT_PROGRAM;
 		}
 		
 		return {
