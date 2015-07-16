@@ -19,7 +19,7 @@ For Mac OSX, open RunSMV.app to trigger Terminal to start the application. Your 
 
 
 ## How it works
-The animation module provides some basic movement parameters such as jump, speed, and gravity. These parameters will be mapped to a time event with a unit of milliseconds in order to display it along with the audio.
+The animation module (built using Phaser.io) provides some basic movement parameters such as jump, speed, and gravity. These parameters will be mapped to a time event with a unit of milliseconds in order to display it along with the audio.
 
 The MIDI module takes in a MIDI file and generates a sequence of events for the animation module. The module compute the values for these events from the parameters of a MIDI note such as pitch, velocity, time, and duration. It only responds to 1/8 notes (8 times in 4 beats).
 
